@@ -275,6 +275,136 @@
         </div>
     </div>
 
+
+<!-- SmartScan Go: additional prototype features -->
+<section class="extra-features" id="extraFeatures">
+    <div class="extra-heading">
+        <span class="feature-eyebrow">SMART SHOPPING TOOLS</span>
+        <h2>More control while you shop</h2>
+        <p>Additional demonstrations for budgeting, product recognition and store assistance.</p>
+    </div>
+
+    <div class="extra-feature-grid">
+        <article class="extra-feature-card">
+            <span class="extra-feature-icon">₹</span>
+            <h3>Shopping budget</h3>
+            <p>Set a spending limit and monitor your estimated cart total.</p>
+            <label for="shoppingBudget">Your budget (INR)</label>
+            <input id="shoppingBudget" type="number" min="1" step="1" value="1000">
+            <div class="budget-track">
+                <span id="shoppingBudgetProgress"></span>
+            </div>
+            <p id="shoppingBudgetStatus" class="feature-status" aria-live="polite">
+                Add products to see your budget.
+            </p>
+        </article>
+
+        <article class="extra-feature-card">
+            <span class="extra-feature-icon">▦</span>
+            <h3>Camera barcode scanner</h3>
+            <p>Try reading a barcode using a supported browser and your device camera.</p>
+            <button type="button" class="feature-button" id="startBarcodeScanner">
+                Open scanner
+            </button>
+            <p class="feature-status">
+                Manual product-code entry remains available as a fallback.
+            </p>
+        </article>
+
+        <article class="extra-feature-card">
+            <span class="extra-feature-icon">✧</span>
+            <h3>AI product recognition</h3>
+            <p>Preview the proposed product-recognition interaction with sample products.</p>
+            <button type="button" class="feature-button" id="openAiDemo">
+                Try recognition demo
+            </button>
+            <p class="feature-status">
+                Demonstration only; no AI model is connected.
+            </p>
+        </article>
+
+        <article class="extra-feature-card">
+            <span class="extra-feature-icon">ⓘ</span>
+            <h3>Mismatch and store assistance</h3>
+            <p>Record a local demonstration note about an incorrect item, price or checkout state.</p>
+            <button type="button" class="feature-button" id="openMismatchHelp">
+                Report an issue
+            </button>
+            <p class="feature-status">
+                No real store staff or support service is connected.
+            </p>
+        </article>
+    </div>
+</section>
+
+<!-- Camera scanner dialog -->
+<div class="feature-dialog-backdrop hidden" id="scannerDialog">
+    <section class="feature-dialog" role="dialog" aria-modal="true"
+             aria-labelledby="scannerTitle">
+        <button type="button" class="feature-dialog-close"
+                data-close-feature="scannerDialog" aria-label="Close scanner">×</button>
+        <span class="feature-eyebrow">BARCODE TOOL</span>
+        <h2 id="scannerTitle">Scan a product barcode</h2>
+        <p>Camera access requires browser support and permission. The scanned value must match a product code in the sample catalogue.</p>
+        <video id="barcodeVideo" playsinline muted></video>
+        <p id="scannerStatus" class="feature-status" aria-live="polite">
+            Select Start Camera to begin.
+        </p>
+        <div class="feature-dialog-actions">
+            <button type="button" class="feature-button" id="beginCameraScan">Start camera</button>
+            <button type="button" class="feature-button secondary" id="stopCameraScan">Stop camera</button>
+            <button type="button" class="feature-button secondary" id="useManualCode">Use manual entry</button>
+        </div>
+    </section>
+</div>
+
+<!-- AI recognition demonstration dialog -->
+<div class="feature-dialog-backdrop hidden" id="aiDemoDialog">
+    <section class="feature-dialog" role="dialog" aria-modal="true"
+             aria-labelledby="aiDemoTitle">
+        <button type="button" class="feature-dialog-close"
+                data-close-feature="aiDemoDialog" aria-label="Close AI demo">×</button>
+        <span class="feature-eyebrow">FUTURE AI FEATURE</span>
+        <h2 id="aiDemoTitle">Product recognition demo</h2>
+        <p>This simulates the result screen of a future AI recognition feature. It does not analyse an image or run an AI model.</p>
+        <label for="aiDemoProduct">Choose a sample product</label>
+        <select id="aiDemoProduct"></select>
+        <button type="button" class="feature-button" id="addRecognisedProduct">
+            Add selected product to cart
+        </button>
+        <p id="aiDemoStatus" class="feature-status" aria-live="polite"></p>
+    </section>
+</div>
+
+<!-- Mismatch / assistance dialog -->
+<div class="feature-dialog-backdrop hidden" id="mismatchDialog">
+    <section class="feature-dialog" role="dialog" aria-modal="true"
+             aria-labelledby="mismatchTitle">
+        <button type="button" class="feature-dialog-close"
+                data-close-feature="mismatchDialog" aria-label="Close help">×</button>
+        <span class="feature-eyebrow">CUSTOMER ASSISTANCE</span>
+        <h2 id="mismatchTitle">Report a shopping issue</h2>
+        <p>Create a local demo note if you notice an incorrect product, price or checkout status.</p>
+        <label for="mismatchType">Issue type</label>
+        <select id="mismatchType">
+            <option>Product or price mismatch</option>
+            <option>Duplicate product in basket</option>
+            <option>Incorrect quantity</option>
+            <option>Checkout status question</option>
+            <option>Exit verification question</option>
+            <option>Other</option>
+        </select>
+        <label for="mismatchDetails">Details</label>
+        <textarea id="mismatchDetails" rows="3"
+                  placeholder="Describe the issue (optional)"></textarea>
+        <button type="button" class="feature-button" id="saveMismatchNote">
+            Create demo assistance note
+        </button>
+        <p id="mismatchStatus" class="feature-status" aria-live="polite"></p>
+    </section>
+</div>
+<!-- End additional prototype features -->
+
     <!-- Clean Amazon-Style Footer -->
     <footer class="footer">
         <a href="#" class="back-to-top" id="backToTop">Back to top</a>

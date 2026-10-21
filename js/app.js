@@ -725,3 +725,327 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 });
+
+/* =========================================================
+   SmartScan Go — Additional front-end features
+   ========================================================= */
+
+(() => {
+    "use strict";
+
+    let featureCameraStream = null;
+    let featureScanTimer = null;
+    let featureBarcodeDetector = null;
+
+    const getFeatureElement = id => document.getElementById(id);
+
+    function openFeatureDialog(id) {
+        const dialog = getFeatureElement(id);
+        if (dialog) {
+            dialog.classList.remove("hidden");
+        }
+    }
+
+    function closeFeatureDialog(id) {
+        const dialog = getFeatureElement(id);
+        if (dialog) {
+            dialog.classList.add("hidden");
+        }
+
+        if (id === "scannerDialog") {
+            stopFeatureCamera();
+        }
+    }
+
+    function setFeatureStatus(id, message, type = "") {
+        const element = getFeatureElement(id);
+        if (!element) return;
+
+        element.textContent = message;
+        element.className = `feature-status ${type}`.trim();
+    }
+
+    function updateShoppingBudget() {
+        const budgetInput = getFeatureElement("shoppingBudget");
+        const progress = getFeatureElement("shoppingBudgetProgress");
+        const status = getFeatureElement("shoppingBudgetStatus");
+
+        if (!budgetInput || !progress || !status) return;
+
+        const budget = Number(budgetInput.value);
+        const finances = getCartFinancials();
+
+        if (!Number.isFinite(budget) || budget <= 0) {
+            progress.style.width = "0%";
+            progress.classList.remove("over-budget");
+            status.textContent = "Enter a budget greater than zero.";
+            return;
+        }
+
+        const percentage = finances.grandTotal / budget * 100;
+
+        progress.style.width = `${Math.min(percentage, 100)}%`;
+        progress.classList.toggle("over-budget", percentage > 100);
+
+        if (finances.grandTotal > budget) {
+            status.textContent =
+                `Budget exceeded by ${formatINR(finances.grandTotal - budget)}.`;
+        } else {
+            status.textContent =
+                `${formatINR(budget - finances.grandTotal)} remaining in your budget.`;
+        }
+    }
+
+    function populateAiDemo() {
+        const select = getFeatureElement("aiDemoProduct");
+        if (!select) return;
+
+        select.innerHTML = products.map(product => {
+            const option = document.createElement("option");
+            option.value = product.id;
+            option.textContent =
+                `${product.name} — ${formatINR(product.price)}`;
+            return option.outerHTML;
+        }).join("");
+    }
+
+    function addAiDemoProduct() {
+        const select = getFeatureElement("aiDemoProduct");
+        if (!select) return;
+
+        const product = products.find(item => item.id === select.value);
+
+        if (!product) {
+            setFeatureStatus(
+                "aiDemoStatus",
+                "Please select a valid sample product.",
+                "error"
+            );
+            return;
+        }
+
+        addProductToCart(product.id, false);
+
+        setFeatureStatus(
+            "aiDemoStatus",
+            `${product.name} was added as a simulated recognition result. No AI model was used.`,
+            "success"
+        );
+
+        updateShoppingBudget();
+    }
+
+    async function startFeatureCamera() {
+        const video = getFeatureElement("barcodeVideo");
+
+        if (!("BarcodeDetector" in window)) {
+            setFeatureStatus(
+                "scannerStatus",
+                "Barcode detection is not supported by this browser. Use manual product-code entry instead.",
+                "error"
+            );
+            return;
+        }
+
+        if (!navigator.mediaDevices?.getUserMedia) {
+            setFeatureStatus(
+                "scannerStatus",
+                "Camera access is unavailable. Try localhost/HTTPS or use manual code entry.",
+                "error"
+            );
+            return;
+        }
+
+        try {
+            featureBarcodeDetector = new BarcodeDetector({
+                formats: [
+                    "ean_13",
+                    "ean_8",
+                    "upc_a",
+                    "upc_e",
+                    "code_128",
+                    "qr_code"
+                ]
+            });
+
+            featureCameraStream = await navigator.mediaDevices.getUserMedia({
+                video: { facingMode: { ideal: "environment" } },
+                audio: false
+            });
+
+            video.srcObject = featureCameraStream;
+            await video.play();
+
+            setFeatureStatus(
+                "scannerStatus",
+                "Camera started. Point it at a barcode. The scanned value must match a sample product code.",
+                "success"
+            );
+
+            scanFeatureFrame();
+        } catch (error) {
+            setFeatureStatus(
+                "scannerStatus",
+                `Could not start the camera: ${error.message}. Check browser permissions or use manual entry.`,
+                "error"
+            );
+        }
+    }
+
+    async function scanFeatureFrame() {
+        if (!featureCameraStream || !featureBarcodeDetector) return;
+
+        try {
+            const video = getFeatureElement("barcodeVideo");
+            const detected = await featureBarcodeDetector.detect(video);
+
+            if (detected.length > 0) {
+                const scannedValue = detected[0].rawValue.trim();
+                const product = products.find(item => item.id === scannedValue);
+
+                if (product) {
+                    stopFeatureCamera();
+                    closeFeatureDialog("scannerDialog");
+                    addProductToCart(product.id, true);
+                    updateShoppingBudget();
+                    showToast(`Barcode matched: ${product.name}`);
+                    return;
+                }
+
+                setFeatureStatus(
+                    "scannerStatus",
+                    `Barcode read: ${scannedValue}. It is not mapped to a sample product. Try manual code 1001–1012.`,
+                    "error"
+                );
+            }
+        } catch (error) {
+            // A camera frame may fail temporarily; scanning continues.
+        }
+
+        if (featureCameraStream) {
+            featureScanTimer = window.setTimeout(scanFeatureFrame, 300);
+        }
+    }
+
+    function stopFeatureCamera() {
+        if (featureScanTimer) {
+            clearTimeout(featureScanTimer);
+            featureScanTimer = null;
+        }
+
+        if (featureCameraStream) {
+            featureCameraStream.getTracks().forEach(track => track.stop());
+            featureCameraStream = null;
+        }
+
+        const video = getFeatureElement("barcodeVideo");
+        if (video) video.srcObject = null;
+    }
+
+    function saveDemoMismatch() {
+        const issue = getFeatureElement("mismatchType")?.value || "Other";
+        const details = getFeatureElement("mismatchDetails")?.value.trim() || "";
+        const reference = `DEMO-${Date.now().toString().slice(-8)}`;
+
+        setFeatureStatus(
+            "mismatchStatus",
+            `Demo note ${reference} created locally. Issue: ${issue}. ${
+                details ? "Details were included in this browser session." : "No extra details supplied."
+            } This was not sent to store staff.`,
+            "success"
+        );
+
+        showToast("Demo assistance note created.");
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        populateAiDemo();
+        updateShoppingBudget();
+
+        getFeatureElement("shoppingBudget")
+            ?.addEventListener("input", updateShoppingBudget);
+
+        getFeatureElement("startBarcodeScanner")
+            ?.addEventListener("click", () => {
+                openFeatureDialog("scannerDialog");
+            });
+
+        getFeatureElement("beginCameraScan")
+            ?.addEventListener("click", startFeatureCamera);
+
+        getFeatureElement("stopCameraScan")
+            ?.addEventListener("click", () => {
+                stopFeatureCamera();
+                setFeatureStatus("scannerStatus", "Camera stopped.");
+            });
+
+        getFeatureElement("useManualCode")
+            ?.addEventListener("click", () => {
+                closeFeatureDialog("scannerDialog");
+
+                const codeInput = getFeatureElement("quickCodeInput");
+                codeInput?.focus();
+                codeInput?.scrollIntoView({
+                    behavior: "smooth",
+                    block: "center"
+                });
+            });
+
+        getFeatureElement("openAiDemo")
+            ?.addEventListener("click", () => {
+                openFeatureDialog("aiDemoDialog");
+            });
+
+        getFeatureElement("addRecognisedProduct")
+            ?.addEventListener("click", addAiDemoProduct);
+
+        getFeatureElement("openMismatchHelp")
+            ?.addEventListener("click", () => {
+                openFeatureDialog("mismatchDialog");
+            });
+
+        getFeatureElement("saveMismatchNote")
+            ?.addEventListener("click", saveDemoMismatch);
+
+        document.querySelectorAll("[data-close-feature]").forEach(button => {
+            button.addEventListener("click", () => {
+                closeFeatureDialog(button.dataset.closeFeature);
+            });
+        });
+
+        document.querySelectorAll(".feature-dialog-backdrop").forEach(backdrop => {
+            backdrop.addEventListener("click", event => {
+                if (event.target === backdrop) {
+                    closeFeatureDialog(backdrop.id);
+                }
+            });
+        });
+
+        // Keep the budget display updated after cart actions.
+        // Existing cart functions remain unchanged.
+        const originalRenderCart = window.renderCart;
+
+        if (typeof originalRenderCart === "function") {
+            window.renderCart = function (...args) {
+                const result = originalRenderCart.apply(this, args);
+                updateShoppingBudget();
+                return result;
+            };
+        }
+
+        // Some existing functions are top-level lexical declarations,
+        // not properties of window. Refresh the budget after cart clicks.
+        document.addEventListener("click", event => {
+            if (
+                event.target.closest(
+                    "[data-add], [data-stepper], [data-drawer-change], " +
+                    "[data-drawer-remove], .sample-chip, #drawerCheckoutBtn"
+                )
+            ) {
+                window.setTimeout(updateShoppingBudget, 0);
+            }
+        });
+
+        window.addEventListener("beforeunload", stopFeatureCamera);
+    });
+})();

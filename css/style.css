@@ -1606,3 +1606,268 @@ a:focus-visible {
         padding: 20px !important;
     }
 }
+
+/* =========================================================
+   SmartScan Go — Additional prototype feature styles
+   ========================================================= */
+
+.extra-features {
+    padding: 55px 5%;
+    background: #f7f8f3;
+    border-top: 1px solid #e1e7e0;
+}
+
+.extra-heading {
+    max-width: 760px;
+    margin: 0 auto 28px;
+    text-align: center;
+}
+
+.feature-eyebrow {
+    color: #24694d;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.6px;
+}
+
+.extra-heading h2,
+.feature-dialog h2 {
+    color: #103a2b;
+    font-size: clamp(22px, 3vw, 30px);
+    margin: 8px 0;
+}
+
+.extra-heading p,
+.feature-dialog > p {
+    color: #718078;
+    font-size: 12px;
+    line-height: 1.8;
+}
+
+.extra-feature-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    max-width: 1320px;
+    margin: 0 auto;
+}
+
+.extra-feature-card {
+    padding: 20px;
+    border: 1px solid #e1e7e0;
+    border-radius: 15px;
+    background: #fff;
+    box-shadow: 0 5px 18px rgba(16, 58, 43, 0.04);
+}
+
+.extra-feature-icon {
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: #eaf2ec;
+    color: #174f3a;
+    font-size: 21px;
+    font-weight: 800;
+    margin-bottom: 15px;
+}
+
+.extra-feature-card h3 {
+    color: #103a2b;
+    font-size: 15px;
+    margin-bottom: 8px;
+}
+
+.extra-feature-card > p {
+    color: #718078;
+    font-size: 11px;
+    line-height: 1.7;
+    margin-bottom: 12px;
+}
+
+.extra-feature-card label,
+.feature-dialog label {
+    display: block;
+    color: #202c25;
+    font-size: 11px;
+    font-weight: 700;
+    margin: 13px 0 6px;
+}
+
+.extra-feature-card input,
+.feature-dialog select,
+.feature-dialog textarea {
+    width: 100%;
+    border: 1px solid #dce4db;
+    border-radius: 8px;
+    background: #fff;
+    padding: 10px;
+    color: #202c25;
+    font: inherit;
+    font-size: 12px;
+}
+
+.budget-track {
+    height: 8px;
+    margin: 12px 0 8px;
+    border-radius: 99px;
+    background: #e4eae2;
+    overflow: hidden;
+}
+
+.budget-track span {
+    display: block;
+    width: 0;
+    height: 100%;
+    border-radius: inherit;
+    background: #174f3a;
+    transition: width 0.2s ease;
+}
+
+.budget-track span.over-budget {
+    background: #b53b32;
+}
+
+.feature-button {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    min-height: 40px;
+    margin: 7px 0;
+    padding: 10px 13px;
+    border: 1px solid #174f3a;
+    border-radius: 9px;
+    background: #174f3a;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.feature-button:hover {
+    background: #103a2b;
+    transform: translateY(-1px);
+}
+
+.feature-button.secondary {
+    background: #fff;
+    color: #174f3a;
+    border-color: #dce4db;
+}
+
+.feature-button.secondary:hover {
+    background: #eaf2ec;
+}
+
+.feature-status {
+    min-height: 18px;
+    margin-top: 9px;
+    color: #718078;
+    font-size: 10px;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+.feature-status.error {
+    color: #b53b32;
+}
+
+.feature-status.success {
+    color: #174f3a;
+}
+
+.feature-dialog-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: grid;
+    place-items: center;
+    padding: 16px;
+    background: rgba(7, 27, 19, 0.72);
+    overflow-y: auto;
+}
+
+.feature-dialog-backdrop.hidden {
+    display: none;
+}
+
+.feature-dialog {
+    position: relative;
+    width: min(480px, 100%);
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 26px;
+    border-radius: 17px;
+    background: #fff;
+    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.25);
+}
+
+.feature-dialog-close {
+    position: absolute;
+    top: 13px;
+    right: 15px;
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: #eaf2ec;
+    color: #103a2b;
+    font-size: 24px;
+}
+
+.feature-dialog video {
+    display: block;
+    width: 100%;
+    max-height: 260px;
+    margin-top: 15px;
+    border-radius: 10px;
+    background: #101010;
+    object-fit: cover;
+}
+
+.feature-dialog-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.feature-dialog-actions #useManualCode {
+    grid-column: 1 / -1;
+}
+
+.feature-dialog textarea {
+    resize: vertical;
+    margin-bottom: 10px;
+}
+
+@media (max-width: 1050px) {
+    .extra-feature-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 560px) {
+    .extra-features {
+        padding: 38px 5%;
+    }
+
+    .extra-feature-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .feature-dialog {
+        padding: 21px;
+    }
+
+    .feature-dialog-actions {
+        grid-template-columns: 1fr;
+    }
+
+    .feature-dialog-actions #useManualCode {
+        grid-column: auto;
+    }
+}
