@@ -3,1158 +3,330 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#174f3a">
-    <meta name="description" content="SmartScan Go — Smartphone-Based Supermarket Scan & Go System. College Product Ideation Capstone Project by Dilan Lad, Hetvi Vora, and Dhvani Patel.">
-    <title>SmartScan Go | Supermarket Self-Checkout System</title>
+    <meta name="theme-color" content="#103A2B">
+    <title>SmartScan Go | Supermarket Scan &amp; Go</title>
     <link rel="stylesheet" href="css/style.css">
     <script src="js/app.js" defer></script>
 </head>
 <body>
-    <!-- Academic Meta Top Bar -->
-    <aside class="academic-topbar" aria-label="Academic Project Affiliation">
-        <div class="topbar-container">
-            <span class="uni-badge">CVM UNIVERSITY · FACULTY OF ENGINEERING &amp; TECHNOLOGY</span>
-            <span class="course-badge">Department of Computer Engineering · Product Ideation (Sem III, 2026–27)</span>
+    <!-- Top Amazon-style Bar -->
+    <header class="header">
+        <div class="top-nav">
+            <!-- Brand Logo -->
+            <a href="#" class="nav-logo" aria-label="SmartScan Go Home">
+                <span class="logo-icon">S</span>
+                <span class="logo-name">smartscan<span class="logo-accent">.go</span></span>
+            </a>
+
+            <!-- Store Location Indicator -->
+            <div class="nav-location" title="Current Store Location">
+                <span class="loc-sub">In-Store Mode</span>
+                <div class="loc-main">
+                    <span class="loc-pin">📍</span>
+                    <span class="loc-store">Anand Supermarket</span>
+                </div>
+            </div>
+
+            <!-- Central Amazon-style Search Bar -->
+            <div class="nav-search-bar">
+                <select id="searchCategorySelect" class="search-category-select" aria-label="Select Category">
+                    <option value="All">All Aisles</option>
+                    <option value="Dairy">Dairy</option>
+                    <option value="Fresh Produce">Produce</option>
+                    <option value="Bakery">Bakery</option>
+                    <option value="Beverages">Beverages</option>
+                    <option value="Snacks">Snacks</option>
+                </select>
+                <input type="text" id="searchInput" class="search-input" placeholder="Search products, shelf codes (e.g. 1001), brands..." autocomplete="off">
+                <button type="button" id="searchBtn" class="search-btn" aria-label="Search">
+                    <span>🔍</span>
+                </button>
+            </div>
+
+            <!-- Scan / Enter Code Quick Button -->
+            <button type="button" class="nav-code-btn" id="openCodeModalBtn" title="Enter a shelf code">
+                <span class="nav-code-icon">▦</span>
+                <div class="nav-code-text">
+                    <span class="code-sub">Scan Shelf</span>
+                    <span class="code-main">Enter Code</span>
+                </div>
+            </button>
+
+            <!-- Running Total & Cart Widget -->
+            <button type="button" class="nav-cart-btn" id="cartToggleBtn" aria-label="Shopping Cart">
+                <div class="cart-icon-wrap">
+                    <span class="cart-glyph">🛒</span>
+                    <span class="cart-count-badge" id="cartCount">0</span>
+                </div>
+                <div class="cart-amount-wrap">
+                    <span class="cart-sub">Running Total</span>
+                    <span class="cart-total" id="navGrandTotal">₹0.00</span>
+                </div>
+            </button>
         </div>
-    </aside>
 
-    <!-- Main Navigation Header -->
-    <header class="site-header" id="siteHeader">
-        <a class="brand" href="#overview" aria-label="SmartScan Go home">
-            <span class="brand-icon">S</span>
-            <span class="brand-text">SmartScan <strong>Go</strong></span>
-        </a>
-
-        <!-- Desktop and Mobile Navigation Menu -->
-        <nav class="nav-menu" id="navMenu" aria-label="Primary Navigation">
-            <ul class="nav-list">
-                <li><a class="nav-link" href="#overview">Overview</a></li>
-                <li><a class="nav-link" href="#research">Research (P1)</a></li>
-                <li><a class="nav-link" href="#ideation">Ideation (P2–3)</a></li>
-                <li><a class="nav-link" href="#concept">Concept (P4–5)</a></li>
-                <li><a class="nav-link nav-highlight" href="#prototype">Prototype (P6–7)</a></li>
-                <li><a class="nav-link" href="#feasibility">Feasibility (P8)</a></li>
-                <li><a class="nav-link" href="#testing">Testing (P9)</a></li>
-                <li><a class="nav-link" href="#pitch">Pitch &amp; Team (P10)</a></li>
-            </ul>
+        <!-- Sub-navigation Category Ribbon (Amazon style) -->
+        <nav class="sub-nav" aria-label="Categories">
+            <button type="button" class="sub-nav-item active" data-category="All">
+                <span>☰</span> All Departments
+            </button>
+            <button type="button" class="sub-nav-item" data-category="Dairy">🥛 Dairy &amp; Eggs</button>
+            <button type="button" class="sub-nav-item" data-category="Fresh Produce">🍎 Farm Produce</button>
+            <button type="button" class="sub-nav-item" data-category="Bakery">🍞 Bakery &amp; Bread</button>
+            <button type="button" class="sub-nav-item" data-category="Beverages">🧃 Cold Drinks &amp; Juices</button>
+            <button type="button" class="sub-nav-item" data-category="Snacks">🥔 Snacks &amp; Munchies</button>
+            <a href="#quickCodeSection" class="sub-nav-deal">⚡ Quick Code Lookup</a>
         </nav>
-
-        <div class="header-right">
-            <button class="cart-button" id="cartButton" type="button" aria-label="View shopping cart">
-                <span>🛒</span>
-                <span class="cart-text">Cart</span>
-                <span class="cart-badge" id="cartCount">0</span>
-            </button>
-            <button class="menu-toggle" id="menuToggle" type="button" aria-label="Toggle navigation menu" aria-expanded="false">
-                <span class="hamburger-bar"></span>
-                <span class="hamburger-bar"></span>
-                <span class="hamburger-bar"></span>
-            </button>
-        </div>
     </header>
 
-    <main class="container">
-        <!-- Section 1: Hero & Product Overview -->
-        <section class="hero" id="overview">
-            <div class="hero-content">
-                <div class="badge-group">
-                    <span class="eyebrow-pill">PRODUCT IDEATION CAPSTONE</span>
-                    <span class="status-pill"><span class="status-dot"></span> Prototype Mode</span>
+    <!-- Main Store Content -->
+    <main class="main-content">
+        <!-- Hero Store Banner -->
+        <section class="store-banner">
+            <div class="banner-content">
+                <span class="banner-badge">SMARTPHONE IN-STORE CHECKOUT</span>
+                <h1>Scan as you shop.<br>Skip the checkout line.</h1>
+                <p>Pick items directly from supermarket shelves, track your running budget, and exit with an instant verified pass.</p>
+                <div class="banner-actions">
+                    <a href="#catalogueSection" class="banner-btn-primary">Shop Catalogue &darr;</a>
+                    <button type="button" class="banner-btn-secondary" id="bannerCodeBtn">Enter Product Code</button>
                 </div>
-                <h1>Shop freely.<br><span>Skip the checkout queue.</span></h1>
-                <p class="hero-lead">
-                    SmartScan Go is a smartphone-based self-checkout platform designed to let supermarket shoppers scan items, maintain a real-time running bill, pay digitally, and present a simulated exit-verification token.
-                </p>
-                <div class="hero-actions">
-                    <a class="primary-button hero-button" href="#prototype">Try Interactive Demo <span>→</span></a>
-                    <a class="secondary-button" href="#research">View Research &amp; Practicals</a>
+            </div>
+            <div class="banner-card">
+                <div class="banner-card-head">
+                    <span class="dot-online"></span>
+                    <span>Self-Checkout Active</span>
                 </div>
-                <div class="hero-meta-strip">
-                    <div class="meta-item">
-                        <strong>&lt; 2 min</strong>
-                        <small>Target Checkout Time (Design Goal)</small>
+                <div class="banner-card-body">
+                    <div class="banner-stat">
+                        <strong>&lt; 2 mins</strong>
+                        <small>Average checkout time</small>
                     </div>
-                    <div class="meta-divider"></div>
-                    <div class="meta-item">
-                        <strong>41 Shoppers</strong>
-                        <small>Field Survey Sample Across 8 Cities</small>
-                    </div>
-                    <div class="meta-divider"></div>
-                    <div class="meta-item">
-                        <strong>4.24 / 5</strong>
-                        <small>Pugh Weighted Score (Concept C2)</small>
+                    <div class="banner-stat">
+                        <strong>0 Waiting</strong>
+                        <small>No lines at cashiers</small>
                     </div>
                 </div>
             </div>
+        </section>
 
-            <div class="hero-visual" aria-label="Smart shopping basket graphic">
-                <div class="visual-circle"></div>
-                <div class="floating-card floating-card-top">
-                    <span class="floating-icon">✓</span>
+        <!-- Quick Code Entry Bar -->
+        <section class="quick-code-strip" id="quickCodeSection">
+            <div class="code-strip-inner">
+                <div class="code-strip-title">
+                    <span class="strip-icon">▦</span>
                     <div>
-                        <strong>Instant Bill Visibility</strong>
-                        <small>Live subtotal &amp; tax tracking</small>
+                        <strong>Have a shelf barcode code?</strong>
+                        <small>Enter the 4-digit code on the price tag</small>
                     </div>
                 </div>
-                <div class="basket-art">
-                    <div class="basket-item item-one" aria-hidden="true">🥑</div>
-                    <div class="basket-item item-two" aria-hidden="true">🥛</div>
-                    <div class="basket-item item-three" aria-hidden="true">🍎</div>
-                    <div class="basket-item item-four" aria-hidden="true">🥖</div>
-                    <div class="basket-body">
-                        <span>SMARTSCAN<br>GO</span>
-                    </div>
-                    <div class="basket-handle"></div>
-                </div>
-                <div class="floating-card floating-card-bottom">
-                    <span class="price-icon">₹</span>
-                    <div>
-                        <strong>Zero Queue Delay</strong>
-                        <small>Scan as you pick from shelf</small>
-                    </div>
+                <form id="quickCodeForm" class="code-strip-form">
+                    <input type="text" id="quickCodeInput" placeholder="Enter code (e.g. 1001)" autocomplete="off" required>
+                    <button type="submit" class="code-strip-submit">Add Item</button>
+                </form>
+                <div class="code-strip-chips">
+                    <span>Try:</span>
+                    <button type="button" class="sample-chip" data-code="1001">1001 (Milk)</button>
+                    <button type="button" class="sample-chip" data-code="1002">1002 (Apples)</button>
+                    <button type="button" class="sample-chip" data-code="1003">1003 (Bread)</button>
+                    <button type="button" class="sample-chip" data-code="1006">1006 (Chips)</button>
                 </div>
             </div>
         </section>
 
-        <!-- Project Overview Quick Pillars -->
-        <section class="overview-pillars">
-            <div class="pillar-card">
-                <div class="pillar-icon">🎯</div>
-                <h3>Primary Problem</h3>
-                <p>Severe supermarket queue congestion and cashier throughput bottlenecks causing customer cart abandonment.</p>
-            </div>
-            <div class="pillar-card">
-                <div class="pillar-icon">💡</div>
-                <h3>Proposed Solution</h3>
-                <p>Customer smartphone-based barcode scanning combined with lightweight AI recognition and digital checkout.</p>
-            </div>
-            <div class="pillar-card">
-                <div class="pillar-icon">🛡️</div>
-                <h3>Exit Verification</h3>
-                <p>Simulated single-use digital exit pass token enabling store staff auditing and theft deterrence.</p>
-            </div>
-        </section>
+        <!-- User Feedback Toast Notification -->
+        <div id="toastNotification" class="toast-notification" role="status" aria-live="polite"></div>
 
-        <!-- Section 2: Practical 1 — Problem Identification & Empathy Mapping -->
-        <section class="content-section" id="research">
-            <div class="section-header">
-                <div class="badge-row">
-                    <span class="section-tag">PRACTICAL 01</span>
-                    <span class="category-tag">Field Research &amp; User Empathy</span>
+        <!-- Catalogue Section (Amazon Grid Style) -->
+        <section class="catalogue-section" id="catalogueSection">
+            <div class="section-top-bar">
+                <div class="section-title">
+                    <h2 id="currentCategoryHeading">All Departments</h2>
+                    <span class="item-count-label" id="itemCountLabel">Showing 12 products</span>
                 </div>
-                <h2>Problem Identification &amp; Field Survey</h2>
-                <p class="section-desc">
-                    Investigating supermarket friction, cashier queues, and customer frustration across retail environments.
-                </p>
-            </div>
-
-            <!-- Survey Evidence Grid -->
-            <div class="survey-banner">
-                <div class="survey-header">
-                    <span class="survey-badge">FIELD SURVEY DATA</span>
-                    <p class="survey-disclaimer">
-                        <strong>Methodology Note:</strong> Team-conducted primary survey of <strong>41 shoppers</strong> across 8 cities (Anand, Navsari, Rajkot, Surat, Bilimora, Vapi, Vadodara, and Mumbai). These figures represent project evidence and team research findings, not generalized national statistics.
-                    </p>
-                </div>
-                <div class="survey-stats-grid">
-                    <div class="stat-card stat-alert">
-                        <div class="stat-number">51.2%</div>
-                        <div class="stat-label">Most Frustrated by Billing Wait Time</div>
-                        <p class="stat-caption">More than half of surveyed shoppers named waiting for cashiers as their single most frustrating in-store shopping experience.</p>
-                    </div>
-                    <div class="stat-card stat-warning">
-                        <div class="stat-number">61.0%</div>
-                        <div class="stat-label">Have Abandoned a Supermarket Queue</div>
-                        <p class="stat-caption">Nearly two-thirds admitted to leaving full baskets or abandoning purchases solely due to excessive checkout line lengths.</p>
-                    </div>
-                    <div class="stat-card stat-info">
-                        <div class="stat-number">8 Cities</div>
-                        <div class="stat-label">Diverse Retail Demographics</div>
-                        <p class="stat-caption">Gathered across tier-1 metro (Mumbai) and tier-2/3 Gujarat commercial centres (Surat, Vadodara, Rajkot, Anand, Navsari, Vapi, Bilimora).</p>
-                    </div>
+                <div class="section-filters">
+                    <label for="sortSelect">Sort by:</label>
+                    <select id="sortSelect" class="sort-select">
+                        <option value="featured">Featured</option>
+                        <option value="price-low">Price: Low to High</option>
+                        <option value="price-high">Price: High to Low</option>
+                        <option value="name">Product Name</option>
+                    </select>
                 </div>
             </div>
 
-            <!-- Candidate Problems Evaluated -->
-            <div class="card-grid-2">
-                <div class="info-card">
-                    <h3>Candidate Problems Considered</h3>
-                    <ul class="styled-list">
-                        <li><strong>Manual Cashier Bottlenecks:</strong> Peak shopping hours overwhelm stationary billing counters.</li>
-                        <li><strong>Hidden Expense Shock:</strong> Shoppers lose track of spending until the final bill total is computed.</li>
-                        <li><strong>Damaged Barcode Delays:</strong> Cashiers frequently stop billing to manually enter worn-out item codes.</li>
-                        <li><strong>Bulky Physical Cart Clutter:</strong> Narrow checkout lanes blocked by queues of overflowing trolleys.</li>
-                    </ul>
-                </div>
-                <div class="info-card selected-highlight">
-                    <div class="selected-badge">SELECTED PROBLEM</div>
-                    <h3>Supermarket Queue Congestion &amp; Slow Billing</h3>
-                    <p>
-                        Checkout queues consume 20–40% of total supermarket visit duration. Cashiers must physically handle, scan, bag, and collect payment for every item sequentially, creating severe friction and lost store revenue.
-                    </p>
-                </div>
-            </div>
-
-            <!-- Empathy Map -->
-            <div class="empathy-section">
-                <h3>Shopper Empathy Mapping</h3>
-                <div class="empathy-grid">
-                    <div class="empathy-card">
-                        <div class="empathy-title">💬 SAYS</div>
-                        <ul>
-                            <li>"I only need two items, but this line will take 15 minutes."</li>
-                            <li>"Why can't I just scan the items myself using my phone?"</li>
-                            <li>"I want to see the total price before I get to the cashier."</li>
-                        </ul>
-                    </div>
-                    <div class="empathy-card">
-                        <div class="empathy-title">🧠 THINKS</div>
-                        <ul>
-                            <li>"Will my milk spoil while I stand in this queue?"</li>
-                            <li>"Did the cashier double-scan that vegetable pack?"</li>
-                            <li>"Online delivery is tempting if in-store checkout stays this slow."</li>
-                        </ul>
-                    </div>
-                    <div class="empathy-card">
-                        <div class="empathy-title">🚶 DOES</div>
-                        <ul>
-                            <li>Inspects line lengths before deciding whether to buy.</li>
-                            <li>Counts items in other shoppers' baskets to find the quickest lane.</li>
-                            <li>Abandons the cart and exits the store during peak rush hours.</li>
-                        </ul>
-                    </div>
-                    <div class="empathy-card">
-                        <div class="empathy-title">⚡ FEELS</div>
-                        <ul>
-                            <li>Frustrated by slow cashier scanning and card machine delays.</li>
-                            <li>Anxious about surprise totals exceeding their personal budget.</li>
-                            <li>Relieved when checkout is transparent, instant, and self-managed.</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Core User Needs & How Might We -->
-            <div class="hmw-banner">
-                <span class="hmw-badge">HOW MIGHT WE STATEMENT</span>
-                <blockquote class="hmw-quote">
-                    "How might we design a secure, user-friendly mobile self-checkout application that enables supermarket shoppers to scan items and pay digitally in real time while shopping, thereby reducing billing wait times to under 2 minutes while preventing store theft?"
-                </blockquote>
-                <div class="hmw-footer">
-                    <span class="note-pill">Note: Under-2-minute checkout is a design goal, not a verified production benchmark.</span>
-                    <div class="needs-tags">
-                        <span>Faster Checkout</span>
-                        <span>Easy Product ID</span>
-                        <span>Transparent Running Bill</span>
-                        <span>Simple Cart Editing</span>
-                        <span>Exit Verification</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Section 3: Practical 2 & 3 — Ideation & Concept Selection -->
-        <section class="content-section" id="ideation">
-            <div class="section-header">
-                <div class="badge-row">
-                    <span class="section-tag">PRACTICAL 02 &amp; 03</span>
-                    <span class="category-tag">Ideation &amp; Concept Evaluation</span>
-                </div>
-                <h2>SCAMPER Framework &amp; Pugh Selection Matrix</h2>
-                <p class="section-desc">
-                    Exploring innovative interventions through systematic brainstorming, group voting, and weighted criteria scoring.
-                </p>
-            </div>
-
-            <!-- SCAMPER Framework Table -->
-            <div class="table-container">
-                <div class="table-title-row">
-                    <h3>SCAMPER Ideation Matrix</h3>
-                    <span class="table-tag">7 Innovation Vectors</span>
-                </div>
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th style="width: 15%;">Vector</th>
-                            <th style="width: 35%;">Ideation Trigger</th>
-                            <th style="width: 50%;">Applied SmartScan Go Concept</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><strong class="vector-tag">S — Substitute</strong></td>
-                            <td>Substitute the fixed cashier terminal with customer hardware.</td>
-                            <td>Use the shopper's smartphone camera as an individual optical scanner gun, eliminating stationary checkout hardware.</td>
-                        </tr>
-                        <tr>
-                            <td><strong class="vector-tag">C — Combine</strong></td>
-                            <td>Combine multiple validation technologies for higher accuracy.</td>
-                            <td>Combine standard 1D/2D barcode scanning with lightweight on-device AI recognition for produce and packaged goods.</td>
-                        </tr>
-                        <tr>
-                            <td><strong class="vector-tag">A — Adapt</strong></td>
-                            <td>Adapt security verification models from other industries.</td>
-                            <td>Adapt airline boarding gate and metro transit QR token models into digital exit-verification passes.</td>
-                        </tr>
-                        <tr>
-                            <td><strong class="vector-tag">M — Modify</strong></td>
-                            <td>Modify how pricing and subtotals are communicated.</td>
-                            <td>Provide an instant real-time running subtotal with live tax breakdown as items enter the physical basket.</td>
-                        </tr>
-                        <tr>
-                            <td><strong class="vector-tag">P — Put to Use</strong></td>
-                            <td>Put existing consumer smartphones to another functional use.</td>
-                            <td>Repurpose personal mobile devices into dedicated self-service retail POS terminals without store hardware overhead.</td>
-                        </tr>
-                        <tr>
-                            <td><strong class="vector-tag">E — Eliminate</strong></td>
-                            <td>Eliminate the primary point of customer friction.</td>
-                            <td>Eliminate physical billing queues, cashier handling steps, and printed thermal paper receipts entirely.</td>
-                        </tr>
-                        <tr>
-                            <td><strong class="vector-tag">R — Rearrange</strong></td>
-                            <td>Rearrange the chronological sequence of item billing.</td>
-                            <td>Invert checkout: scan continuously while traversing aisles instead of dumping the entire cart at the exit counter.</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Shortlisted Ideas & Votes -->
-            <div class="shortlist-section">
-                <div class="table-title-row">
-                    <h3>Practical 2 Shortlisted Concepts &amp; Group Votes</h3>
-                    <span class="note-pill">Internal team votes (evidence, not market validation)</span>
-                </div>
-                <div class="votes-grid">
-                    <div class="vote-card top-choice">
-                        <div class="vote-pill top-pill">10 VOTES · RANK 1</div>
-                        <h4>I-17: Barcode + AI Recognition</h4>
-                        <p>Hybrid smartphone scanning combining standard barcode detection with computer vision confirmation.</p>
-                    </div>
-                    <div class="vote-card">
-                        <div class="vote-pill">9 VOTES · RANK 2</div>
-                        <h4>I-20: Automatic Exit Verification</h4>
-                        <p>Digital checkout token presented at store exit gate to confirm paid items against digital receipt.</p>
-                    </div>
-                    <div class="vote-card">
-                        <div class="vote-pill">8 VOTES · RANK 3</div>
-                        <h4>I-06: One-Tap Checkout</h4>
-                        <p>Instant digital payment trigger consolidating cart items into a single UPI or wallet authorization.</p>
-                    </div>
-                    <div class="vote-card">
-                        <div class="vote-pill">8 VOTES · RANK 4</div>
-                        <h4>I-03: QR / UPI Payment Integration</h4>
-                        <p>Native Indian payment stack support for instant QR-code mobile transfers (proposed future backend).</p>
-                    </div>
-                    <div class="vote-card">
-                        <div class="vote-pill">7 VOTES · RANK 5</div>
-                        <h4>I-11: AI-Based Theft Detection</h4>
-                        <p>Proposed vision heuristic to flag mismatch between scanned item weight and cart content.</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Practical 3 Weighted Decision Matrix -->
-            <div class="table-container">
-                <div class="table-title-row">
-                    <div>
-                        <h3>Weighted Decision Matrix (Practical 3 Concept Selection)</h3>
-                        <p class="table-subtitle">Evaluated against the Datum: Traditional Cashier Checkout (Score: 3.00)</p>
-                    </div>
-                    <span class="table-tag selected-tag">Concept C2 Selected (4.24 / 5.00)</span>
-                </div>
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>Evaluation Criterion</th>
-                            <th style="text-align: center;">Weight</th>
-                            <th style="text-align: center;">C1: Barcode Only</th>
-                            <th style="text-align: center; background: #eef5f0;">C2: Barcode + AI (Selected)</th>
-                            <th style="text-align: center;">C3: Smart RFID Cart</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>User Need Satisfaction</td>
-                            <td style="text-align: center;">20%</td>
-                            <td style="text-align: center;">4.0</td>
-                            <td style="text-align: center; background: #eef5f0; font-weight: 700; color: var(--green);">4.8</td>
-                            <td style="text-align: center;">4.2</td>
-                        </tr>
-                        <tr>
-                            <td>Security &amp; Verification</td>
-                            <td style="text-align: center;">18%</td>
-                            <td style="text-align: center;">3.0</td>
-                            <td style="text-align: center; background: #eef5f0; font-weight: 700; color: var(--green);">4.3</td>
-                            <td style="text-align: center;">4.5</td>
-                        </tr>
-                        <tr>
-                            <td>Novelty / Innovation</td>
-                            <td style="text-align: center;">17%</td>
-                            <td style="text-align: center;">3.2</td>
-                            <td style="text-align: center; background: #eef5f0; font-weight: 700; color: var(--green);">4.4</td>
-                            <td style="text-align: center;">4.0</td>
-                        </tr>
-                        <tr>
-                            <td>Technical Feasibility</td>
-                            <td style="text-align: center;">15%</td>
-                            <td style="text-align: center;">4.5</td>
-                            <td style="text-align: center; background: #eef5f0; font-weight: 700; color: var(--green);">4.0</td>
-                            <td style="text-align: center;">2.5</td>
-                        </tr>
-                        <tr>
-                            <td>Ease of Use</td>
-                            <td style="text-align: center;">10%</td>
-                            <td style="text-align: center;">4.2</td>
-                            <td style="text-align: center; background: #eef5f0; font-weight: 700; color: var(--green);">4.5</td>
-                            <td style="text-align: center;">4.0</td>
-                        </tr>
-                        <tr>
-                            <td>Cost of Development</td>
-                            <td style="text-align: center;">8%</td>
-                            <td style="text-align: center;">4.5</td>
-                            <td style="text-align: center; background: #eef5f0; font-weight: 700; color: var(--green);">3.8</td>
-                            <td style="text-align: center;">1.8</td>
-                        </tr>
-                        <tr>
-                            <td>Scalability across Supermarkets</td>
-                            <td style="text-align: center;">7%</td>
-                            <td style="text-align: center;">4.0</td>
-                            <td style="text-align: center; background: #eef5f0; font-weight: 700; color: var(--green);">4.2</td>
-                            <td style="text-align: center;">2.0</td>
-                        </tr>
-                        <tr>
-                            <td>Implementation Time</td>
-                            <td style="text-align: center;">5%</td>
-                            <td style="text-align: center;">4.5</td>
-                            <td style="text-align: center; background: #eef5f0; font-weight: 700; color: var(--green);">3.6</td>
-                            <td style="text-align: center;">2.0</td>
-                        </tr>
-                    </tbody>
-                    <tfoot>
-                        <tr class="table-total-row">
-                            <td><strong>Weighted Total Score (Out of 5.00)</strong></td>
-                            <td style="text-align: center;"><strong>100%</strong></td>
-                            <td style="text-align: center;"><strong>3.95</strong></td>
-                            <td style="text-align: center; background: #eef5f0; font-size: 15px; color: var(--green);"><strong>4.24 (Rank 1)</strong></td>
-                            <td style="text-align: center;"><strong>3.38</strong></td>
-                        </tr>
-                    </tfoot>
-                </table>
-                <p class="matrix-footnote">
-                    * Concept C2 achieved the highest score (4.24/5), offering the optimal balance of user satisfaction, security verification, and reasonable deployment cost without requiring expensive RFID-tagged hardware carts.
-                </p>
-            </div>
-        </section>
-
-        <!-- Section 4: Practical 4 & 5 — Concept Development & Usability -->
-        <section class="content-section" id="concept">
-            <div class="section-header">
-                <div class="badge-row">
-                    <span class="section-tag">PRACTICAL 04 &amp; 05</span>
-                    <span class="category-tag">System Architecture &amp; Usability Heuristics</span>
-                </div>
-                <h2>Concept Development &amp; Ergonomic Evaluation</h2>
-                <p class="section-desc">
-                    Translating the selected C2 concept into an intuitive 5-touchpoint user journey governed by Nielsen-Norman usability principles.
-                </p>
-            </div>
-
-            <!-- Honest Distinction Card -->
-            <div class="distinction-card">
-                <div class="distinction-icon">⚖️</div>
-                <div class="distinction-content">
-                    <h4>Academic Transparency: Implemented Prototype vs. Proposed Vision</h4>
-                    <div class="distinction-grid">
-                        <div class="distinction-col">
-                            <span class="dist-pill dist-green">Currently Implemented in Front-End Demo</span>
-                            <ul>
-                                <li>Interactive product catalogue with real-time category filtering.</li>
-                                <li>Manual product-code lookup &amp; catalog matching.</li>
-                                <li>Dynamic cart state with live quantity controls and ₹ total updates.</li>
-                                <li>Simulated digital checkout and itemized printable receipt.</li>
-                                <li>Demonstration exit-verification pass with unique security token.</li>
-                            </ul>
-                        </div>
-                        <div class="distinction-col">
-                            <span class="dist-pill dist-amber">Proposed Production Architecture (Future Scope)</span>
-                            <ul>
-                                <li>Hardware smartphone camera live 1D/2D barcode scanning.</li>
-                                <li>Lightweight computer vision AI model for produce identification.</li>
-                                <li>Real-time supermarket POS database inventory sync.</li>
-                                <li>Live UPI / payment gateway transaction settlement.</li>
-                                <li>Physical automated store turnstile / exit-gate hardware integration.</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 5 Main Touchpoints -->
-            <div class="touchpoints-section">
-                <h3>The 5 Core User Touchpoints</h3>
-                <div class="touchpoint-cards">
-                    <div class="touch-card">
-                        <span class="touch-step">01</span>
-                        <h4>Store Entry &amp; Session Start</h4>
-                        <p>Customer opens the web app upon entering the supermarket; session initializes with a fresh shopping basket.</p>
-                    </div>
-                    <div class="touch-card">
-                        <span class="touch-step">02</span>
-                        <h4>Product Identification</h4>
-                        <p>Shopper selects items from the visual catalogue or enters the unique shelf product code manually.</p>
-                    </div>
-                    <div class="touch-card">
-                        <span class="touch-step">03</span>
-                        <h4>Cart Review &amp; Edit</h4>
-                        <p>Immediate feedback displays item count, unit cost, live running subtotal, and flexible quantity controls.</p>
-                    </div>
-                    <div class="touch-card">
-                        <span class="touch-step">04</span>
-                        <h4>Checkout &amp; Bill Finalization</h4>
-                        <p>Shopper reviews order summary, verifies 5% estimated tax, and completes simulated checkout without cashier intervention.</p>
-                    </div>
-                    <div class="touch-card">
-                        <span class="touch-step">05</span>
-                        <h4>Exit Pass &amp; Verification</h4>
-                        <p>Single-use digital verification token is presented to store staff or exit scanner to validate paid items.</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Nielsen-Norman Usability Heuristics Applied -->
-            <div class="table-container">
-                <div class="table-title-row">
-                    <h3>Ergonomic &amp; Usability Heuristic Compliance (Practical 5)</h3>
-                    <span class="table-tag">Nielsen-Norman Evaluation</span>
-                </div>
-                <div class="heuristics-grid">
-                    <div class="heuristic-card">
-                        <div class="h-number">#1</div>
-                        <h4>Visibility of System Status</h4>
-                        <p>Header displays live cart count badge; instant toast feedback notifies users whenever items are added, modified, or removed.</p>
-                    </div>
-                    <div class="heuristic-card">
-                        <div class="h-number">#2</div>
-                        <h4>Match Real World System</h4>
-                        <p>Familiar supermarket basket terminology, standard Indian Rupee (₹) formatting, and recognizable grocery categories.</p>
-                    </div>
-                    <div class="heuristic-card">
-                        <div class="h-number">#3</div>
-                        <h4>User Control &amp; Freedom</h4>
-                        <p>Immediate "+" and "−" buttons to adjust quantities, one-click item removal, and instant "Start New Basket" session reset.</p>
-                    </div>
-                    <div class="heuristic-card">
-                        <div class="h-number">#4</div>
-                        <h4>Consistency &amp; Standards</h4>
-                        <p>Consistent retail layout: left-side inventory catalogue and right-side sticky basket summary following standard e-commerce patterns.</p>
-                    </div>
-                    <div class="heuristic-card">
-                        <div class="h-number">#5</div>
-                        <h4>Error Prevention</h4>
-                        <p>Validation prevents negative quantities, checkout button is disabled on empty carts, and invalid product codes trigger clear warnings.</p>
-                    </div>
-                    <div class="heuristic-card">
-                        <div class="h-number">#6</div>
-                        <h4>Recognition over Recall</h4>
-                        <p>Product cards feature vibrant grocery iconography, category tags, clear unit prices, and distinct shelf codes.</p>
-                    </div>
-                    <div class="heuristic-card">
-                        <div class="h-number">#7</div>
-                        <h4>Aesthetic &amp; Minimalist Design</h4>
-                        <p>Clean ivory and forest-green retail palette with generous whitespace, avoiding intrusive banners, ads, or cognitive clutter.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Section 5: Practical 6 & 7 — Interactive Scan-and-Go Prototype -->
-        <section class="shopping-section" id="prototype">
-            <div class="section-header">
-                <div class="badge-row">
-                    <span class="section-tag">PRACTICAL 06 &amp; 07</span>
-                    <span class="category-tag">Live Demonstration</span>
-                </div>
-                <h2>Interactive Scan &amp; Go Prototype</h2>
-                <p class="section-desc">
-                    Try the working prototype: browse products, use category filters or search, enter product codes, manage your cart, and complete a simulated checkout with an exit token.
-                </p>
-            </div>
-
-            <!-- Workflow Visual Strip -->
-            <div class="workflow-strip">
-                <div class="wf-node active"><span class="wf-circle">1</span> Store Entry</div>
-                <div class="wf-arrow">→</div>
-                <div class="wf-node active"><span class="wf-circle">2</span> Scan / Enter Code</div>
-                <div class="wf-arrow">→</div>
-                <div class="wf-node active"><span class="wf-circle">3</span> Review Smart Cart</div>
-                <div class="wf-arrow">→</div>
-                <div class="wf-node active"><span class="wf-circle">4</span> Demo Checkout</div>
-                <div class="wf-arrow">→</div>
-                <div class="wf-node"><span class="wf-circle">5</span> Exit Token Pass</div>
-            </div>
-
-            <!-- Interactive Prototype Layout -->
-            <div class="shopping-layout">
-                <!-- Left Column: Catalogue & Code Entry -->
-                <div class="catalog-panel">
-                    <div class="panel-heading">
-                        <div>
-                            <h3>Supermarket Inventory</h3>
-                            <p>Filter by aisle, search items, or click to add directly to your cart.</p>
-                        </div>
-                        <span class="product-total" id="productCountBadge">12 ITEMS</span>
-                    </div>
-
-                    <!-- Catalogue Search & Category Filter Controls -->
-                    <div class="filter-controls">
-                        <div class="search-box">
-                            <span class="search-icon">🔍</span>
-                            <input type="text" id="searchInput" placeholder="Search product name, aisle, or code..." autocomplete="off">
-                            <button type="button" id="clearSearch" class="clear-search-btn" aria-label="Clear search" style="display: none;">×</button>
-                        </div>
-                        <div class="category-pills" id="categoryPills" role="tablist" aria-label="Product categories">
-                            <button type="button" class="category-pill active" data-category="All" role="tab" aria-selected="true">All</button>
-                            <button type="button" class="category-pill" data-category="Dairy" role="tab" aria-selected="false">Dairy</button>
-                            <button type="button" class="category-pill" data-category="Fresh Produce" role="tab" aria-selected="false">Fresh Produce</button>
-                            <button type="button" class="category-pill" data-category="Bakery" role="tab" aria-selected="false">Bakery</button>
-                            <button type="button" class="category-pill" data-category="Beverages" role="tab" aria-selected="false">Beverages</button>
-                            <button type="button" class="category-pill" data-category="Snacks" role="tab" aria-selected="false">Snacks</button>
-                        </div>
-                    </div>
-
-                    <!-- Products Grid -->
-                    <div class="product-grid" id="productGrid" aria-live="polite"></div>
-
-                    <!-- Manual Product Code Entry Box -->
-                    <div class="manual-entry">
-                        <div class="manual-icon">▦</div>
-                        <div class="manual-copy">
-                            <h3>Have a Shelf Product Code?</h3>
-                            <p>Enter the numerical code printed on the item label or shelf tag.</p>
-                        </div>
-                        <form id="codeForm" class="code-form">
-                            <label for="productCode">Enter 4-Digit Product Code</label>
-                            <div class="code-input-row">
-                                <input id="productCode" name="productCode" type="text"
-                                    placeholder="e.g. 1001" autocomplete="off" required>
-                                <button type="submit" class="primary-button">Add to Basket</button>
-                            </div>
-                            <div class="code-chip-row">
-                                <span class="form-hint">Quick test codes:</span>
-                                <button type="button" class="code-chip" data-code="1001">1001 (Milk)</button>
-                                <button type="button" class="code-chip" data-code="1002">1002 (Apples)</button>
-                                <button type="button" class="code-chip" data-code="1004">1004 (Avocado)</button>
-                                <button type="button" class="code-chip" data-code="1006">1006 (Chips)</button>
-                            </div>
-                        </form>
-                    </div>
-
-                    <!-- User Action Toast Message -->
-                    <p class="message" id="appMessage" role="status" aria-live="polite"></p>
-                </div>
-
-                <!-- Right Column: Shopping Cart Aside -->
-                <aside class="cart-panel" id="cart" aria-label="Shopping Basket Summary">
-                    <div class="cart-heading">
-                        <div>
-                            <span class="eyebrow">RUNNING BILL</span>
-                            <h3>Smart Basket <span id="cartTitleCount">(0 items)</span></h3>
-                        </div>
-                        <span class="cart-symbol">🛍️</span>
-                    </div>
-
-                    <!-- Dynamic Cart Items Container -->
-                    <div class="cart-items" id="cartItems">
-                        <div class="empty-cart">
-                            <span class="empty-icon">🛒</span>
-                            <h4>Your basket is empty</h4>
-                            <p>Select products from the catalogue or enter shelf codes above.</p>
-                        </div>
-                    </div>
-
-                    <!-- Cart Financial Summary -->
-                    <div class="cart-summary">
-                        <div class="summary-line">
-                            <span>Subtotal</span>
-                            <span id="subtotal">₹0.00</span>
-                        </div>
-                        <div class="summary-line">
-                            <span>Estimated Tax (5% GST)</span>
-                            <span id="tax">₹0.00</span>
-                        </div>
-                        <div class="summary-line total-line">
-                            <span>Estimated Total</span>
-                            <strong id="grandTotal">₹0.00</strong>
-                        </div>
-                        <p class="tax-note">Illustrative 5% GST computation for student demonstration.</p>
-
-                        <button class="checkout-button" id="checkoutButton" type="button" disabled>
-                            <span>Proceed to Demo Checkout</span>
-                            <span>→</span>
-                        </button>
-                        <p class="secure-note">
-                            🔒 Simulated Checkout · No card or UPI credentials collected
-                        </p>
-                    </div>
-                </aside>
-            </div>
-
-            <!-- Receipt & Exit Pass Section (Revealed upon Checkout) -->
-            <section class="receipt-section hidden" id="receiptSection" aria-label="Generated Digital Receipt">
-                <div class="receipt-card">
-                    <div class="receipt-success">✓</div>
-                    <span class="eyebrow">DEMO CHECKOUT COMPLETE</span>
-                    <h2>Supermarket Digital Receipt</h2>
-                    <p class="receipt-description">
-                        This digital receipt confirms simulated checkout completion. No real financial payment was processed.
-                    </p>
-
-                    <div class="receipt-meta">
-                        <div>
-                            <span>Receipt ID</span>
-                            <strong id="receiptId">SSG-DEMO</strong>
-                        </div>
-                        <div>
-                            <span>Date &amp; Time</span>
-                            <strong id="receiptDate">—</strong>
-                        </div>
-                    </div>
-
-                    <div id="receiptItems" class="receipt-items"></div>
-
-                    <div class="receipt-breakdown">
-                        <div class="breakdown-line">
-                            <span>Subtotal</span>
-                            <span id="receiptSubtotal">₹0.00</span>
-                        </div>
-                        <div class="breakdown-line">
-                            <span>GST (5%)</span>
-                            <span id="receiptTax">₹0.00</span>
-                        </div>
-                    </div>
-
-                    <div class="receipt-total">
-                        <span>Total Paid (Simulated)</span>
-                        <strong id="receiptTotal">₹0.00</strong>
-                    </div>
-
-                    <!-- Authentic Exit Verification Demonstration Pass -->
-                    <div class="exit-box">
-                        <div class="exit-badge-header">
-                            <span class="exit-badge-title">STORE EXIT VERIFICATION PASS</span>
-                            <span class="exit-status-ok">VALIDATED ✓</span>
-                        </div>
-                        <div class="verification-code" id="verificationCode">SSG-DEMO-0000</div>
-                        
-                        <!-- Visual barcode simulation for demonstration -->
-                        <div class="barcode-graphic" aria-hidden="true">
-                            <span class="bar b-thin"></span><span class="bar b-thick"></span><span class="bar b-med"></span>
-                            <span class="bar b-thin"></span><span class="bar b-thick"></span><span class="bar b-thin"></span>
-                            <span class="bar b-med"></span><span class="bar b-thick"></span><span class="bar b-thin"></span>
-                            <span class="bar b-thin"></span><span class="bar b-med"></span><span class="bar b-thick"></span>
-                            <span class="bar b-thin"></span><span class="bar b-med"></span><span class="bar b-thin"></span>
-                            <span class="bar b-thick"></span><span class="bar b-med"></span><span class="bar b-thin"></span>
-                        </div>
-
-                        <p class="exit-disclaimer">
-                            <strong>Demonstration Notice:</strong> Present this simulated digital token at the exit turnstile or to staff for receipt auditing. This is an educational prototype token and does not represent a cryptographically live anti-theft security credential.
-                        </p>
-                    </div>
-
-                    <div class="receipt-actions">
-                        <button class="primary-button" id="printReceipt" type="button">🖨️ Print Digital Receipt</button>
-                        <button class="secondary-button" id="newShopping" type="button">🔄 Start a New Basket</button>
-                    </div>
-                </div>
-            </section>
-        </section>
-
-        <!-- Section 6: Practical 8 — Feasibility & Risk Analysis -->
-        <section class="content-section" id="feasibility">
-            <div class="section-header">
-                <div class="badge-row">
-                    <span class="section-tag">PRACTICAL 08</span>
-                    <span class="category-tag">Risk &amp; Viability Assessment</span>
-                </div>
-                <h2>Multidimensional Feasibility &amp; Risk Analysis</h2>
-                <p class="section-desc">
-                    Rigorous evaluation of technical constraints, market readiness, unit economics, and operational security vectors.
-                </p>
-            </div>
-
-            <!-- 4 Feasibility Pillars -->
-            <div class="feasibility-grid">
-                <div class="feasibility-card">
-                    <div class="f-header">
-                        <span class="f-icon">⚙️</span>
-                        <h3>Technical Feasibility</h3>
-                    </div>
-                    <ul class="styled-list">
-                        <li><strong>Camera API Access:</strong> Modern mobile browsers support WebRTC/MediaDevices for barcode capture.</li>
-                        <li><strong>Edge AI Models:</strong> Lightweight quantized models (e.g., MobileNet) execute client-side at &gt;25 FPS.</li>
-                        <li><strong>Offline Resiliency:</strong> IndexedDB / LocalStorage buffers cart state during intermittent supermarket Wi-Fi drops.</li>
-                    </ul>
-                </div>
-
-                <div class="feasibility-card">
-                    <div class="f-header">
-                        <span class="f-icon">📈</span>
-                        <h3>Market Feasibility</h3>
-                    </div>
-                    <ul class="styled-list">
-                        <li><strong>UPI Ubiquity:</strong> High adoption of mobile payments in India removes payment onboarding friction.</li>
-                        <li><strong>High Smartphone Penetration:</strong> Over 82% of urban supermarket shoppers carry 4G/5G smartphones.</li>
-                        <li><strong>Supermarket Competition:</strong> Modern retail chains seek ways to cut billing counter space and expand selling area.</li>
-                    </ul>
-                </div>
-
-                <div class="feasibility-card">
-                    <div class="f-header">
-                        <span class="f-icon">💰</span>
-                        <h3>Economic Feasibility</h3>
-                    </div>
-                    <ul class="styled-list">
-                        <li><strong>Low Hardware Overhead:</strong> Eliminates ₹2,50,000+ stationary POS terminals per checkout lane.</li>
-                        <li><strong>No Expensive Smart Carts:</strong> Avoids fragile RFID carts costing ₹35,000+ each with high maintenance.</li>
-                        <li><strong>Staff Optimization:</strong> Shifts staff from repetitive manual scanning to customer service and exit auditing.</li>
-                    </ul>
-                </div>
-
-                <div class="feasibility-card">
-                    <div class="f-header">
-                        <span class="f-icon">⚠️</span>
-                        <h3>Implementation Constraints</h3>
-                    </div>
-                    <ul class="styled-list">
-                        <li><strong>Low Lighting / Aisle Glare:</strong> Poor grocery aisle lighting may impact camera barcode detection rates.</li>
-                        <li><strong>Loose Produce Weight:</strong> Unpackaged vegetables and fruits require aisle self-weigh barcode scale integration.</li>
-                        <li><strong>Device Battery Drain:</strong> Continuous video feed scanning can consume noticeable battery over extended shopping trips.</li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- Risk Mitigation Matrix Table -->
-            <div class="table-container" style="margin-top: 30px;">
-                <div class="table-title-row">
-                    <h3>Risk Assessment &amp; Mitigation Strategies</h3>
-                    <span class="table-tag">Operational Security Matrix</span>
-                </div>
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th style="width: 25%;">Identified Risk</th>
-                            <th style="width: 15%; text-align: center;">Severity</th>
-                            <th style="width: 15%; text-align: center;">Likelihood</th>
-                            <th style="width: 45%;">Engineering Mitigation Strategy</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><strong>Damaged / Scratched Barcodes</strong></td>
-                            <td style="text-align: center;"><span class="severity-pill sev-med">Medium</span></td>
-                            <td style="text-align: center;"><span class="likelihood-pill">High</span></td>
-                            <td>Provide prominent manual 4-digit product code fallback entry, complemented by aisle staff handheld scanners.</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Store Network Dead Zones</strong></td>
-                            <td style="text-align: center;"><span class="severity-pill sev-high">High</span></td>
-                            <td style="text-align: center;"><span class="likelihood-pill">Medium</span></td>
-                            <td>Implement client-side basket buffering; transactions synchronize whenever network connectivity is restored prior to checkout.</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Unscanned Item Theft / Shoplifting</strong></td>
-                            <td style="text-align: center;"><span class="severity-pill sev-high">Critical</span></td>
-                            <td style="text-align: center;"><span class="likelihood-pill">Medium</span></td>
-                            <td>Combine digital exit-pass spot checks, random audits, and future computer-vision weight discrepancy heuristics.</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Price Discrepancy &amp; Outdated Cache</strong></td>
-                            <td style="text-align: center;"><span class="severity-pill sev-med">Medium</span></td>
-                            <td style="text-align: center;"><span class="likelihood-pill">Low</span></td>
-                            <td>Timestamped catalogue cache with mandatory delta checks during final bill calculation against the store inventory server.</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Consumer Payment &amp; Data Privacy</strong></td>
-                            <td style="text-align: center;"><span class="severity-pill sev-high">High</span></td>
-                            <td style="text-align: center;"><span class="likelihood-pill">Low</span></td>
-                            <td>No client storage of banking or UPI credentials; prototype does not collect sensitive payment data; production will use encrypted bank gateways.</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </section>
-
-        <!-- Section 7: Practical 9 — Prototype Testing & Improvements -->
-        <section class="content-section" id="testing">
-            <div class="section-header">
-                <div class="badge-row">
-                    <span class="section-tag">PRACTICAL 09</span>
-                    <span class="category-tag">Evaluation &amp; Iteration</span>
-                </div>
-                <h2>Prototype Usability Testing &amp; Refinement</h2>
-                <p class="section-desc">
-                    Tracking functional tasks, student testing observations, implemented improvements, and environmental sustainability impacts.
-                </p>
-            </div>
-
-            <!-- Testing Log Matrix -->
-            <div class="table-container">
-                <div class="table-title-row">
-                    <div>
-                        <h3>Usability Task Testing Log</h3>
-                        <p class="table-subtitle">Preliminary internal verification by project team members; formal multi-user field trials pending.</p>
-                    </div>
-                    <span class="table-tag">Iterative Refinement</span>
-                </div>
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>User Task</th>
-                            <th>Expected Outcome</th>
-                            <th>Observed Outcome</th>
-                            <th>Issue Identified</th>
-                            <th>Improvement Implemented</th>
-                            <th>Retest Result</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><strong>T-01: Manual Code Entry</strong></td>
-                            <td>Valid 4-digit code adds product to cart immediately.</td>
-                            <td>Item added, but input field remained filled with previous code.</td>
-                            <td>Shopper had to manually backspace before entering next item.</td>
-                            <td>Added auto-clear and autofocus to input field upon valid submission.</td>
-                            <td><span class="status-pass">Passed ✓</span></td>
-                        </tr>
-                        <tr>
-                            <td><strong>T-02: Search &amp; Filter</strong></td>
-                            <td>Category pills instantly filter catalogue without page reload.</td>
-                            <td>Filtering worked, but no visual indication when 0 items matched search.</td>
-                            <td>Shopper assumed application was frozen or broken.</td>
-                            <td>Created friendly "No products found" empty state with clear reset button.</td>
-                            <td><span class="status-pass">Passed ✓</span></td>
-                        </tr>
-                        <tr>
-                            <td><strong>T-03: Zero-Item Checkout</strong></td>
-                            <td>System prevents checkout button click when cart is empty.</td>
-                            <td>Checkout button was clickable, triggering an alert message.</td>
-                            <td>Alert modal interrupted shopper flow unexpectedly.</td>
-                            <td>Applied HTML <code>disabled</code> attribute and opacity styling until &ge;1 item is added.</td>
-                            <td><span class="status-pass">Passed ✓</span></td>
-                        </tr>
-                        <tr>
-                            <td><strong>T-04: Digital Receipt Print</strong></td>
-                            <td>Clean printed receipt displaying only bill items and exit token.</td>
-                            <td>Whole webpage including navigation, buttons, and catalogue printed.</td>
-                            <td>Excessive paper waste and cluttered receipt layout.</td>
-                            <td>Created dedicated <code>@media print</code> CSS isolating the receipt card.</td>
-                            <td><span class="status-pass">Passed ✓</span></td>
-                        </tr>
-                        <tr>
-                            <td><strong>T-05: Real-World In-Store Trial</strong></td>
-                            <td>Shoppers scan 10 physical items in active supermarket aisle.</td>
-                            <td><span class="pending-badge">Pending</span> Field deployment scheduled.</td>
-                            <td>Aisle Wi-Fi latency &amp; camera lens smudges under evaluation.</td>
-                            <td>Offline caching architecture planned in roadmap.</td>
-                            <td><span class="pending-badge">Pending Field Test</span></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Sustainability & Environmental Impact -->
-            <div class="card-grid-2" style="margin-top: 30px;">
-                <div class="info-card">
-                    <div class="f-header">
-                        <span class="f-icon">🌱</span>
-                        <h3>Environmental Sustainability</h3>
-                    </div>
-                    <p>
-                        Traditional supermarket checkouts consume millions of kilometers of non-recyclable thermal paper receipt rolls annually, which contain toxic BPA/BPS coatings. SmartScan Go promotes sustainability through:
-                    </p>
-                    <ul class="styled-list">
-                        <li><strong>100% Digital Receipts:</strong> Elimination of chemical thermal paper rolls.</li>
-                        <li><strong>Energy Reduction:</strong> Eliminates heavy stationary CRT/LCD cash register consoles running 14 hours daily.</li>
-                        <li><strong>Reduced Hardware Scrappage:</strong> No specialized smart cart electronics destined for electronic waste landfills.</li>
-                    </ul>
-                </div>
-
-                <div class="info-card">
-                    <div class="f-header">
-                        <span class="f-icon">🚀</span>
-                        <h3>Development Roadmap</h3>
-                    </div>
-                    <div class="roadmap-timeline">
-                        <div class="roadmap-item done">
-                            <strong>Phase 1: Front-End Interactive Prototype (Current)</strong>
-                            <p>Vanilla JS catalogue, manual code lookup, live basket totals, printable receipt, demo exit pass.</p>
-                        </div>
-                        <div class="roadmap-item">
-                            <strong>Phase 2: Live Barcode WebRTC Scanner (V1.1)</strong>
-                            <p>Integrate QuaggaJS / ZXing browser camera library for live physical 1D/2D barcode scanning.</p>
-                        </div>
-                        <div class="roadmap-item">
-                            <strong>Phase 3: Backend &amp; UPI Gateway (V2.0)</strong>
-                            <p>Node.js backend with live product inventory database, Razorpay/UPI sandbox, and encrypted exit tokens.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Section 8: Practical 10 — Final Pitch & Project Team -->
-        <section class="content-section" id="pitch">
-            <div class="section-header">
-                <div class="badge-row">
-                    <span class="section-tag">PRACTICAL 10</span>
-                    <span class="category-tag">Capstone Pitch &amp; Attribution</span>
-                </div>
-                <h2>Capstone Pitch &amp; Project Team</h2>
-                <p class="section-desc">
-                    Comprehensive 10-point presentation overview and student developer credentials.
-                </p>
-            </div>
-
-            <!-- 10-Point Pitch Deck Layout -->
-            <div class="pitch-deck-container">
-                <div class="pitch-grid">
-                    <div class="pitch-card">
-                        <span class="pitch-number">01</span>
-                        <h4>Title &amp; Mission</h4>
-                        <p><strong>SmartScan Go:</strong> Eliminating supermarket checkout queues through smartphone-driven self-billing.</p>
-                    </div>
-                    <div class="pitch-card">
-                        <span class="pitch-number">02</span>
-                        <h4>The Core Problem</h4>
-                        <p>51.2% of surveyed shoppers frustrated by slow billing; 61% have abandoned queues due to excessive length.</p>
-                    </div>
-                    <div class="pitch-card">
-                        <span class="pitch-number">03</span>
-                        <h4>Target Customer</h4>
-                        <p>Urban grocery shoppers, busy professionals, and modern supermarket operators seeking higher basket throughput.</p>
-                    </div>
-                    <div class="pitch-card">
-                        <span class="pitch-number">04</span>
-                        <h4>The Solution</h4>
-                        <p>Scan items while picking from shelves, track live running bill, pay digitally, and show verification token at the exit.</p>
-                    </div>
-                    <div class="pitch-card">
-                        <span class="pitch-number">05</span>
-                        <h4>Key Features</h4>
-                        <p>Instant price visibility, live 5% GST calculation, transparent cart editing, single-use exit verification pass.</p>
-                    </div>
-                    <div class="pitch-card">
-                        <span class="pitch-number">06</span>
-                        <h4>How It Works</h4>
-                        <p>Store Entry &rarr; Scan Product &rarr; Review Running Cart &rarr; Demo Checkout &rarr; Exit Pass Verification.</p>
-                    </div>
-                    <div class="pitch-card">
-                        <span class="pitch-number">07</span>
-                        <h4>Why Now?</h4>
-                        <p>Ubiquitous Indian UPI adoption, universal 4G/5G mobile penetration, and retail pressure to cut operational overhead.</p>
-                    </div>
-                    <div class="pitch-card">
-                        <span class="pitch-number">08</span>
-                        <h4>Project Validation</h4>
-                        <p>41-shopper survey, rigorous Pugh matrix ranking (C2 score: 4.24/5), and working interactive prototype.</p>
-                    </div>
-                    <div class="pitch-card">
-                        <span class="pitch-number">09</span>
-                        <h4>Sustainability</h4>
-                        <p>Zero thermal paper waste, lowered supermarket hardware power consumption, and zero specialized smart-cart e-waste.</p>
-                    </div>
-                    <div class="pitch-card">
-                        <span class="pitch-number">10</span>
-                        <h4>Next Steps</h4>
-                        <p>Camera barcode scanning API integration, pilot testing in local Anand/Vallabh Vidyanagar grocery stores.</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Project Team Members Section -->
-            <div class="team-section">
-                <div class="table-title-row">
-                    <h3>Project Team Members</h3>
-                    <span class="table-tag">Computer Engineering · Sem III</span>
-                </div>
-                <div class="team-grid">
-                    <article class="team-card">
-                        <div class="team-avatar">DL</div>
-                        <h4>Dilan Lad</h4>
-                        <span class="team-role">Lead Developer &amp; System Architect</span>
-                        <p>Led project architecture, front-end state management, cart calculation logic, and GitHub codebase repository.</p>
-                    </article>
-
-                    <article class="team-card">
-                        <div class="team-avatar">HV</div>
-                        <h4>Hetvi Vora</h4>
-                        <span class="team-role">UI/UX Designer &amp; Research Lead</span>
-                        <p>Spearheaded the 41-shopper field survey, empathy mapping, Nielsen-Norman usability heuristic evaluation, and visual styling.</p>
-                    </article>
-
-                    <article class="team-card">
-                        <div class="team-avatar">DP</div>
-                        <h4>Dhvani Patel</h4>
-                        <span class="team-role">Product Analyst &amp; Feasibility Lead</span>
-                        <p>Formulated the SCAMPER brainstorming vectors, Pugh concept evaluation matrix, risk assessment, and sustainability roadmap.</p>
-                    </article>
-                </div>
-
-                <!-- Academic Affiliation Footer Card -->
-                <div class="academic-affiliation-card">
-                    <div class="affiliation-badge">ACADEMIC INSTITUTION</div>
-                    <h4>CVM University, Faculty of Engineering &amp; Technology</h4>
-                    <p>Department of Computer Engineering · Course: Product Ideation (Course Code: 2026–27, Semester III)</p>
-                    <small>Faculty Guide &amp; Department Review · Vallabh Vidyanagar, Gujarat, India</small>
-                </div>
-            </div>
+            <!-- Product Cards Grid -->
+            <div class="products-grid" id="productsGrid"></div>
         </section>
     </main>
 
-    <!-- Comprehensive Site Footer -->
-    <footer class="site-footer">
-        <div class="footer-top">
-            <div class="footer-brand-col">
-                <a class="brand footer-brand" href="#overview">
-                    <span class="brand-icon">S</span>
-                    <span>SmartScan <strong>Go</strong></span>
-                </a>
-                <p class="footer-motto">
-                    A smartphone-based supermarket self-checkout system exploring frictionless retail shopping and digital exit verification.
-                </p>
-                <div class="academic-tag">CVM University · FET · Computer Engineering</div>
+    <!-- Slide-Over Shopping Cart Drawer (Amazon Style) -->
+    <div class="cart-backdrop" id="cartBackdrop"></div>
+    <aside class="cart-drawer" id="cartDrawer" aria-label="Shopping Cart Drawer">
+        <div class="drawer-header">
+            <div class="drawer-title">
+                <h3>Shopping Cart</h3>
+                <span class="drawer-item-count" id="drawerCartCount">(0 items)</span>
+            </div>
+            <button type="button" class="drawer-close-btn" id="cartCloseBtn" aria-label="Close cart">&times;</button>
+        </div>
+
+        <div class="drawer-body" id="drawerCartItems">
+            <div class="empty-drawer">
+                <span class="empty-drawer-icon">🛒</span>
+                <h4>Your cart is empty</h4>
+                <p>Browse products or enter a shelf code to fill your basket.</p>
+            </div>
+        </div>
+
+        <div class="drawer-footer">
+            <div class="drawer-summary-line">
+                <span>Subtotal</span>
+                <span id="drawerSubtotal">₹0.00</span>
+            </div>
+            <div class="drawer-summary-line">
+                <span>Estimated 5% GST</span>
+                <span id="drawerTax">₹0.00</span>
+            </div>
+            <div class="drawer-summary-line drawer-total-line">
+                <span>Estimated Total</span>
+                <strong id="drawerGrandTotal">₹0.00</strong>
             </div>
 
-            <div class="footer-nav-col">
-                <h5>Academic Practicals</h5>
+            <button type="button" class="drawer-checkout-btn" id="drawerCheckoutBtn" disabled>
+                <span>Proceed to Checkout</span>
+                <span>&rarr;</span>
+            </button>
+            <p class="drawer-disclaimer">🔒 Simulated self-checkout &bull; Pay &amp; get exit pass</p>
+        </div>
+    </aside>
+
+    <!-- Simulated Checkout & Digital Receipt Modal -->
+    <div class="modal-backdrop hidden" id="checkoutModalBackdrop">
+        <div class="receipt-modal" role="dialog" aria-modal="true" aria-labelledby="receiptModalTitle">
+            <button type="button" class="modal-close-btn" id="receiptCloseBtn" aria-label="Close receipt">&times;</button>
+            
+            <div class="receipt-modal-inner">
+                <div class="receipt-badge-ok">✓</div>
+                <span class="receipt-tag">SELF-CHECKOUT CONFIRMATION</span>
+                <h2 id="receiptModalTitle">Digital Store Receipt</h2>
+                <p class="receipt-intro">Show your digital exit pass to store staff or scan at exit turnstile.</p>
+
+                <!-- Receipt Details Meta -->
+                <div class="receipt-meta-box">
+                    <div>
+                        <span>Receipt ID</span>
+                        <strong id="receiptId">SSG-REC-0000</strong>
+                    </div>
+                    <div>
+                        <span>Date &amp; Time</span>
+                        <strong id="receiptDate">—</strong>
+                    </div>
+                </div>
+
+                <!-- Purchased Items List -->
+                <div class="receipt-items-container" id="receiptItemsList"></div>
+
+                <!-- Financial Breakdown -->
+                <div class="receipt-calculation">
+                    <div class="calc-row">
+                        <span>Items Subtotal</span>
+                        <span id="receiptSubtotal">₹0.00</span>
+                    </div>
+                    <div class="calc-row">
+                        <span>GST (5%)</span>
+                        <span id="receiptTax">₹0.00</span>
+                    </div>
+                    <div class="calc-row calc-total">
+                        <span>Grand Total (Paid)</span>
+                        <strong id="receiptTotal">₹0.00</strong>
+                    </div>
+                </div>
+
+                <!-- Exit Verification Pass Card -->
+                <div class="exit-pass-box">
+                    <div class="exit-pass-top">
+                        <span class="exit-pass-tag">STORE EXIT PASS</span>
+                        <span class="exit-pass-status">VERIFIED ✓</span>
+                    </div>
+                    <div class="exit-token-code" id="verificationCode">EXIT-PASS-0000-OK</div>
+                    
+                    <!-- Simulated Barcode Pattern -->
+                    <div class="exit-barcode-graphic" aria-hidden="true">
+                        <span class="bar-l w-1"></span><span class="bar-l w-3"></span><span class="bar-l w-2"></span>
+                        <span class="bar-l w-1"></span><span class="bar-l w-3"></span><span class="bar-l w-1"></span>
+                        <span class="bar-l w-2"></span><span class="bar-l w-3"></span><span class="bar-l w-1"></span>
+                        <span class="bar-l w-1"></span><span class="bar-l w-2"></span><span class="bar-l w-3"></span>
+                        <span class="bar-l w-1"></span><span class="bar-l w-2"></span><span class="bar-l w-1"></span>
+                        <span class="bar-l w-3"></span><span class="bar-l w-2"></span><span class="bar-l w-1"></span>
+                    </div>
+
+                    <p class="exit-note">
+                        Valid for store exit. Single-use checkout token generated on customer device.
+                    </p>
+                </div>
+
+                <!-- Modal Actions -->
+                <div class="receipt-actions">
+                    <button type="button" class="btn-print" id="printReceiptBtn">🖨️ Print Receipt</button>
+                    <button type="button" class="btn-new-trip" id="newShoppingBtn">Start New Basket</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Clean Amazon-Style Footer -->
+    <footer class="footer">
+        <a href="#" class="back-to-top" id="backToTop">Back to top</a>
+
+        <div class="footer-links-grid">
+            <div class="footer-col">
+                <h4>Get to Know Us</h4>
                 <ul>
-                    <li><a href="#research">Practical 1: Field Research &amp; Empathy</a></li>
-                    <li><a href="#ideation">Practical 2: SCAMPER Ideation</a></li>
-                    <li><a href="#ideation">Practical 3: Pugh Selection Matrix</a></li>
-                    <li><a href="#concept">Practical 4: Concept Development</a></li>
-                    <li><a href="#concept">Practical 5: Usability Evaluation</a></li>
+                    <li><a href="#catalogueSection">About SmartScan Go</a></li>
+                    <li><a href="#catalogueSection">Self-Checkout Technology</a></li>
+                    <li><a href="#catalogueSection">Zero Hardware Architecture</a></li>
+                    <li><a href="#catalogueSection">Environmental Impact</a></li>
                 </ul>
             </div>
-
-            <div class="footer-nav-col">
-                <h5>Demonstration &amp; Testing</h5>
+            <div class="footer-col">
+                <h4>Shop by Department</h4>
                 <ul>
-                    <li><a href="#prototype">Practical 6–7: Interactive Prototype</a></li>
-                    <li><a href="#feasibility">Practical 8: Feasibility &amp; Risk Analysis</a></li>
-                    <li><a href="#testing">Practical 9: Testing &amp; Refinements</a></li>
-                    <li><a href="#pitch">Practical 10: Capstone Pitch Deck</a></li>
-                    <li><a href="#pitch">Team Members &amp; Credits</a></li>
+                    <li><a href="#" class="footer-cat-link" data-category="Dairy">Dairy &amp; Farm Eggs</a></li>
+                    <li><a href="#" class="footer-cat-link" data-category="Fresh Produce">Fresh Fruits &amp; Produce</a></li>
+                    <li><a href="#" class="footer-cat-link" data-category="Bakery">Artisan Bakery &amp; Bread</a></li>
+                    <li><a href="#" class="footer-cat-link" data-category="Beverages">Cold Drinks &amp; Juices</a></li>
+                    <li><a href="#" class="footer-cat-link" data-category="Snacks">Packaged Snacks</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Store &amp; Security</h4>
+                <ul>
+                    <li><a href="#quickCodeSection">Manual Code Fallback</a></li>
+                    <li><a href="#catalogueSection">Exit Gate Verification</a></li>
+                    <li><a href="#catalogueSection">Privacy &amp; Data Security</a></li>
+                    <li><a href="#catalogueSection">Customer Assistance</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Project &amp; Team</h4>
+                <ul>
+                    <li><span><strong>Dilan Lad</strong> &bull; Lead Developer</span></li>
+                    <li><span><strong>Hetvi Vora</strong> &bull; UI/UX Designer</span></li>
+                    <li><span><strong>Dhvani Patel</strong> &bull; Product Strategy</span></li>
+                    <li><span class="uni-text">CVM University, FET</span></li>
                 </ul>
             </div>
         </div>
 
         <div class="footer-bottom">
-            <p>
-                <strong>Educational Disclaimer:</strong> SmartScan Go is an academic front-end prototype. It is not connected to a live supermarket POS database, does not process real monetary transactions, and the exit pass is a demonstration token only.
+            <div class="footer-brand-row">
+                <span class="logo-icon footer-icon">S</span>
+                <span class="footer-brand-title">smartscan<span class="logo-accent">.go</span></span>
+            </div>
+            <p class="footer-copyright">
+                &copy; <span id="currentYear"></span> SmartScan Go &bull; Smartphone Supermarket Self-Checkout System. Built by Dilan Lad, Hetvi Vora, Dhvani Patel.
             </p>
-            <span>&copy; <span id="currentYear"></span> SmartScan Go · Dilan Lad, Hetvi Vora, Dhvani Patel</span>
         </div>
     </footer>
 </body>
