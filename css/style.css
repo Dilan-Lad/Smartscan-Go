@@ -1,18 +1,30 @@
 
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap');
 
+
 :root {
-    --green: #174f3a;
-    --green-dark: #103a2b;
-    --green-light: #eaf2ec;
-    --ivory: #faf8f1;
-    --white: #ffffff;
-    --text: #202c25;
+    --green: #174F3A;
+    --green-dark: #103A2B;
+    --green-light: #EAF2EC;
+
+    --ivory: #FAF8F1;
+    --white: #FFFFFF;
+
+    --text: #202C25;
     --muted: #758078;
-    --border: #e8e9e1;
-    --gold: #d4a85c;
-    --danger: #b83b35;
+    --border: #E8E9E1;
+
+    --gold: #D4A85C;
+    --danger: #B83B35;
+
     --shadow: 0 12px 36px rgba(25, 54, 39, 0.07);
+    --shadow-hover: 0 16px 40px rgba(25, 54, 39, 0.12);
+
+    --radius-small: 8px;
+    --radius-medium: 14px;
+    --radius-large: 20px;
+
+    --content-width: 1200px;
 }
 
 * {
@@ -517,9 +529,11 @@ input:focus-visible {
 }
 
 .product-card:hover {
-    transform: translateY(-3px);
-    box-shadow: var(--shadow);
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-hover);
+    border-color: #D5E1D6;
 }
+
 
 .product-art {
     height: 112px;
