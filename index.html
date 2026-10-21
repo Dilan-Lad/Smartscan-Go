@@ -1,0 +1,202 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#174f3a">
+    <meta name="description" content="SmartScan Go makes supermarket shopping simpler with a digital cart and demo self-checkout.">
+    <title>SmartScan Go | Smart Shopping</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/app.js" defer></script>
+</head>
+<body>
+    <header class="site-header">
+        <a class="brand" href="#" aria-label="SmartScan Go home">
+            <span class="brand-icon">S</span>
+            <span>SmartScan <strong>Go</strong></span>
+        </a>
+        <div class="header-right">
+            <span class="demo-badge">DEMO STORE</span>
+            <button class="cart-button" id="cartButton" type="button">
+                Cart <span id="cartCount">0</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="hero">
+            <div class="hero-content">
+                <span class="eyebrow">A smarter way to shop</span>
+                <h1>Shop freely.<br><span>Skip the queue.</span></h1>
+                <p>Scan your products, track your spending, and complete your shopping with a simple digital checkout experience.</p>
+                <a class="primary-button hero-button" href="#scanner">Start shopping <span>→</span></a>
+                <div class="hero-note">
+                    <span class="status-dot"></span>
+                    Prototype mode · Sample products
+                </div>
+            </div>
+            <div class="hero-visual" aria-label="Shopping basket illustration">
+                <div class="visual-circle"></div>
+                <div class="floating-card floating-card-top">
+                    <span class="floating-icon">✓</span>
+                    <div><strong>Easy checkout</strong><small>Your cart, in real time</small></div>
+                </div>
+                <div class="basket-art">
+                    <div class="basket-item item-one">🥑</div>
+                    <div class="basket-item item-two">🥛</div>
+                    <div class="basket-item item-three">🍎</div>
+                    <div class="basket-item item-four">🥖</div>
+                    <div class="basket-body"><span>SMART<br>SHOPPING</span></div>
+                    <div class="basket-handle"></div>
+                </div>
+                <div class="floating-card floating-card-bottom">
+                    <span class="price-icon">₹</span>
+                    <div><strong>Stay on budget</strong><small>See your running total</small></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="steps-section">
+            <div class="section-heading">
+                <div>
+                    <span class="eyebrow">HOW IT WORKS</span>
+                    <h2>Three steps. Less waiting.</h2>
+                </div>
+                <p>A simple self-checkout journey designed around you.</p>
+            </div>
+            <div class="steps-grid">
+                <article class="step-card">
+                    <span class="step-number">01</span>
+                    <div class="step-icon">▦</div>
+                    <h3>Enter a product</h3>
+                    <p>Choose a sample product or enter its product code manually.</p>
+                </article>
+                <article class="step-card">
+                    <span class="step-number">02</span>
+                    <div class="step-icon">🛒</div>
+                    <h3>Review your cart</h3>
+                    <p>Check quantities, remove items, and track your total.</p>
+                </article>
+                <article class="step-card">
+                    <span class="step-number">03</span>
+                    <div class="step-icon">✓</div>
+                    <h3>Checkout digitally</h3>
+                    <p>Generate a demo receipt and an exit-verification code.</p>
+                </article>
+            </div>
+        </section>
+
+        <section class="shopping-section" id="scanner">
+            <div class="section-heading shopping-heading">
+                <div>
+                    <span class="eyebrow">YOUR SHOPPING SESSION</span>
+                    <h2>Let's fill your basket.</h2>
+                </div>
+                <span class="store-label"><span class="status-dot"></span> Sample inventory</span>
+            </div>
+
+            <div class="shopping-layout">
+                <div class="catalog-panel">
+                    <div class="panel-heading">
+                        <div>
+                            <h3>Available products</h3>
+                            <p>Select a product to add it to your cart.</p>
+                        </div>
+                        <span class="product-total">6 ITEMS</span>
+                    </div>
+                    <div class="product-grid" id="productGrid"></div>
+
+                    <div class="manual-entry">
+                        <div class="manual-icon">▦</div>
+                        <div class="manual-copy">
+                            <h3>Have a product code?</h3>
+                            <p>Enter the code printed on a sample product.</p>
+                        </div>
+                        <form id="codeForm" class="code-form">
+                            <label for="productCode">Product code</label>
+                            <div class="code-input-row">
+                                <input id="productCode" name="productCode" type="text"
+                                    placeholder="e.g. 1001" autocomplete="off" required>
+                                <button type="submit" class="primary-button">Add</button>
+                            </div>
+                            <small class="form-hint">Try 1001, 1002, 1003, 1004, 1005 or 1006.</small>
+                        </form>
+                    </div>
+                    <p class="message" id="appMessage" role="status" aria-live="polite"></p>
+                </div>
+
+                <aside class="cart-panel" id="cart">
+                    <div class="cart-heading">
+                        <div>
+                            <span class="eyebrow">YOUR BASKET</span>
+                            <h3>Shopping cart <span id="cartTitleCount">(0)</span></h3>
+                        </div>
+                        <span class="cart-symbol">🛍</span>
+                    </div>
+
+                    <div class="cart-items" id="cartItems">
+                        <div class="empty-cart">
+                            <span class="empty-icon">🛒</span>
+                            <h4>Your basket is empty</h4>
+                            <p>Add a product to get started.</p>
+                        </div>
+                    </div>
+
+                    <div class="cart-summary">
+                        <div class="summary-line"><span>Subtotal</span><span id="subtotal">₹0.00</span></div>
+                        <div class="summary-line"><span>Tax</span><span id="tax">₹0.00</span></div>
+                        <div class="summary-line total-line"><span>Estimated total</span><strong id="grandTotal">₹0.00</strong></div>
+                        <p class="tax-note">Illustrative 5% tax estimate for this prototype.</p>
+                        <button class="checkout-button" id="checkoutButton" type="button" disabled>
+                            Proceed to checkout <span>→</span>
+                        </button>
+                        <p class="secure-note">Demo checkout · No real payment is taken</p>
+                    </div>
+                </aside>
+            </div>
+        </section>
+
+        <section class="trust-strip">
+            <div class="trust-icon">✦</div>
+            <div>
+                <h3>Designed for a smoother shopping experience</h3>
+                <p>SmartScan Go is a student prototype exploring faster checkout and digital receipts.</p>
+            </div>
+        </section>
+
+        <section class="receipt-section hidden" id="receiptSection">
+            <div class="receipt-card">
+                <div class="receipt-success">✓</div>
+                <span class="eyebrow">DEMO CHECKOUT COMPLETE</span>
+                <h2>Your digital receipt</h2>
+                <p class="receipt-description">This confirms the demo checkout only. No payment was processed.</p>
+                <div class="receipt-meta">
+                    <span>Receipt ID</span><strong id="receiptId">SSG-DEMO</strong>
+                    <span>Date</span><strong id="receiptDate">—</strong>
+                </div>
+                <div id="receiptItems" class="receipt-items"></div>
+                <div class="receipt-total"><span>Total</span><strong id="receiptTotal">₹0.00</strong></div>
+                <div class="exit-box">
+                    <span class="eyebrow">EXIT VERIFICATION DEMO</span>
+                    <div class="verification-code" id="verificationCode">SSG-DEMO</div>
+                    <p>Show this demo code to represent a staff verification step. It is not a scannable QR code or a security credential.</p>
+                </div>
+                <div class="receipt-actions">
+                    <button class="primary-button" id="printReceipt" type="button">Print receipt</button>
+                    <button class="secondary-button" id="newShopping" type="button">Start a new basket</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <a class="brand footer-brand" href="#">
+            <span class="brand-icon">S</span>
+            <span>SmartScan <strong>Go</strong></span>
+        </a>
+        <p>Student project prototype · Not connected to a real supermarket.</p>
+        <span>© <span id="currentYear"></span> SmartScan Go</span>
+    </footer>
+</body>
+</html>
